@@ -8,12 +8,78 @@
     <title>Hello World!</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <fieldset>
+      <legend>Макропрофиль в мг/л (ppm)</legend>
+    <div class="profile-grid-container">
+        <span></span>
+        <label for="prN">N</label>
+        <label for="prP">P</label>
+        <label for="prK">K</label>
+        <label for="prCa">Ca</label>
+        <label for="prMg">Mg</label>
+        <label for="prS">S</label>
+        <label for="prEC">EC</label>
+        <span></span>
+        <input id = "prN" type="number" value="0.0" step="1.0" class="profile"/>
+        <input id = "prP" type="number" value="0.0" step="1.0"/>
+        <input id = "prK" type="number" value="0.0" step="1.0"/>
+        <input id = "prCa" type="number" value="0.0" step="1.0"/>
+        <input id = "prMg" type="number" value="0.0" step="1.0"/>
+        <input id = "prS" type="number" value="0.0" step="1.0"/>
+        <input id = "prEC" type="number" value="0.0" step="1.0"/>
+        <label for = "prNO3">NO3</label>
+        <input id = "prNO3" type="number" value="0.0" step="1.0"/>
+        <label for = "prNRatio">NH4:NO3</label>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <label for="prNH4">NH4</label>
+        <input id = "prNH4" type="number" value="0.0" step="1.0"/>
+        <input id = "prNRatio" type="number" value="0.0" step="1.0"/>
+    </div>
+    </fieldset>
+    <fieldset>
+      <legend>Матрица соотношений</legend>
+    <div class="ratio-grid-container">
+        <span></span>  <span>N</span><span>P</span><span>K</span><span>Ca</span><span>Mg</span><span>S</span>
+        <span>N</span> <span id="r11">0</span><span id="r12">0</span><span id="r13">0</span><span id="r14">0</span><span id="r15">0</span><span id="r16">0</span>
+        <span>P</span> <span id="r21">0</span><span id="r22">0</span><span id="r23">0</span><span id="r24">0</span><span id="r25">0</span><span id="r26">0</span>
+        <span>K</span> <span id="r31">0</span><span id="r32">0</span><span id="r33">0</span><span id="r34">0</span><span id="r35">0</span><span id="r36">0</span>
+        <span>Ca</span><span id="r41">0</span><span id="r42">0</span><span id="r43">0</span><span id="r44">0</span><span id="r45">0</span><span id="r46">0</span>
+        <span>Mg</span><span id="r51">0</span><span id="r52">0</span><span id="r53">0</span><span id="r54">0</span><span id="r55">0</span><span id="r56">0</span>
+        <span>S</span> <span id="r61">0</span><span id="r62">0</span><span id="r63">0</span><span id="r64">0</span><span id="r65">0</span><span id="r66">0</span>
+    </div>
+    </fieldset>
+    <fieldset>
+    <legend>Составы солей</legend>
+    <div class="fertilisers-grid-container">
+        <span></span>
+        <span>NH4</span>
+        <span>NO3</span>
+        <span>P</span>
+        <span>K</span>
+        <span>Ca</span>
+        <span>Mg</span>
+        <span>S</span>
+        <span>грамм</span>
+        <span>CaN2O6</span><span id="f11">0</span><span id="f12">0</span><span id="f13">0</span><span id="f14">0</span><span id="f15">0</span><span id="f16">0</span><span id="f17">0</span><span id="w1">0</span>
+        <span>KNO3</span>  <span id="f21">0</span><span id="f22">0</span><span id="f23">0</span><span id="f24">0</span><span id="f25">0</span><span id="f26">0</span><span id="f27">0</span><span id="w2">0</span>
+        <span>NH4NO3</span><span id="f31">0</span><span id="f32">0</span><span id="f33">0</span><span id="f34">0</span><span id="f35">0</span><span id="f36">0</span><span id="f37">0</span><span id="w3">0</span>
+        <span>MgSO4</span> <span id="f41">0</span><span id="f42">0</span><span id="f43">0</span><span id="f44">0</span><span id="f45">0</span><span id="f46">0</span><span id="f47">0</span><span id="w4">0</span>
+        <span>KH2PO4</span><span id="f51">0</span><span id="f52">0</span><span id="f53">0</span><span id="f54">0</span><span id="f55">0</span><span id="f56">0</span><span id="f57">0</span><span id="w5">0</span>
+        <span>K2SO4</span> <span id="f61">0</span><span id="f62">0</span><span id="f63">0</span><span id="f64">0</span><span id="f65">0</span><span id="f66">0</span><span id="f67">0</span><span id="w6">0</span>
+    </div>
+  </fieldset>
+
+
     We are using Node.js <span id="node-version"></span>,
     Chromium <span id="chrome-version"></span>,
     and Electron <span id="electron-version"></span>.
 
     <!-- You can also require other files to run in this process -->
+    <script src="./node_modules/mathjs/lib/browser/math.js"></script>
     <script src="./renderer.js"></script>
   </body>
 </html>

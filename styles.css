@@ -1,3 +1,41 @@
 /* styles.css */
 
+body {
+    margin: 0 auto;
+    width: 1000px;
+    padding: 1em;
+    position:absolute;
+    top: 0;
+    left: 0;
+}
+
+
+input[type=number] {
+  width: 110px;
+}
+
+.profile-grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  padding: 10px;
+  grid-gap: 5px 5px;
+}
+
+.ratio-grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto;
+  padding: 10px;
+  grid-gap: 5px 5px;
+}
+
+.fertilisers-grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto auto;
+  padding: 10px;
+  grid-gap: 5px 5px;
+}
+
+
+
+
 /* Add styles here to customize the appearance of your app */
