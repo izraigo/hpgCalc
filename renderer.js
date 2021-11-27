@@ -5,24 +5,27 @@ const K   = 3;
 const Ca  = 4;
 const Mg  = 5;
 const S   = 6;
-const ELEMENTS_NO   = 7;
+const CL  = 7
+const ELEMENTS_NO   = 8;
 
-const elements  = ['NH4', 'NO3', 'P', 'K', 'Ca', 'Mg', 'S'];
+const elements  = ['NH4',    'NO3',       'P',     'K',   'Ca',   'Mg',    'S',  'Cl'];
 
-let fCaN2O6    = [    0.7,  14.176,         0,       0,  19.28,      0,      0];
-let fKNO3      = [      0,  13.649,         0,    38.1,      0,      0,      0];
-let fNH4NO3    = [ 16.520,  16.520,         0,       0,      0,      0,      0];
-let fMgSO4     = [      0,       0,         0,       0,      0, 10.221, 13.484];
-let fKH2PO4    = [      0,       0,      21.8,  27.518,      0,      0,      0];
-let fK2SO4     = [      0,       0,         0,  44.874,      0,      0, 18.401];
+let fCaN2O6    = [    0.7,  14.176,         0,       0,  19.28,      0,      0,      0];
+let fKNO3      = [      0,  13.649,         0,    38.1,      0,      0,      0,      0];
+let fNH4NO3    = [ 16.520,  16.520,         0,       0,      0,      0,      0,      0];
+let fMgSO4     = [      0,       0,         0,       0,      0, 10.221, 13.484,      0];
+let fKH2PO4    = [      0,       0,      21.8,  27.518,      0,      0,      0,      0];
+let fK2SO4     = [      0,       0,         0,  44.874,      0,      0, 18.401,      0];
+let fCaCl2     = [      0,       0,         0,       0, 18.294,      0,      0, 32.336];
+let fMgNO3     = [      0,  10.925,         0,       0,      0,  9.479,      0,      0];
 
 let profile = [];
 let fertilisers = [];
 let mInvFreeS  = [];
 let mInvFreeCa = [];
 
-setFertilisers(math.matrixFromRows(fCaN2O6, fKNO3, fNH4NO3, fMgSO4, fKH2PO4, fK2SO4));
-setProfile([12.428, 165.702, 60, 226.840, 141.83, 32.25, 42.543]);
+setFertilisers(math.matrixFromRows(fCaN2O6, fKNO3, fNH4NO3, fMgSO4, fKH2PO4, fK2SO4, fCaCl2));
+setProfile([12.428, 165.702, 60, 226.840, 141.83, 32.25, 42.543, 0]);
 
 document.getElementById('pN').addEventListener('input', e => {onNchange()});
 document.getElementById('pNRatio').addEventListener('input', e => {onNchange()});
@@ -33,6 +36,7 @@ document.getElementById('pK').addEventListener('input', e => {onProfileChangeFre
 document.getElementById('pCa').addEventListener('input', e => {onProfileChangeFreeS()});
 document.getElementById('pMg').addEventListener('input', e => {onProfileChangeFreeS()});
 document.getElementById('pS').addEventListener('input', e => {onProfileChangeFreeCa()});
+document.getElementById('pCl').addEventListener('input', e => {onProfileChangeFreeS()});
 
 function onProfileChangeFreeS() {
     solver = () => math.multiply(mInvFreeS, profile.filter((value, index, arr) => index != S));
@@ -74,10 +78,10 @@ function updateRatios() {
     let p = [profile[NO3] + profile[NH4], profile[P], profile[K], profile[Ca], profile[Mg], profile[S]];
     let m = math.matrixFromRows(p, p, p, p, p, p);
     let m2 = math.matrixFromColumns(p, p, p, p, p, p);
-
+    let size = p.length;
     let ratios = math.dotDivide(m, m2);
-    for (let r = 1; r < ELEMENTS_NO; r++) {
-        for (let c = 1; c < ELEMENTS_NO; c++) {
+    for (let r = 1; r <= size; r++) {
+        for (let c = 1; c <= size; c++) {
             document.getElementById('r' + r + c).textContent = ratios[r - 1][c - 1].toFixed(3);
         }
     }
@@ -126,7 +130,7 @@ function updateProfileInputs() {
 }
 
 function updateFertilisersInputs(f) {
-    for (let r = 1; r < ELEMENTS_NO; r++) {
+    for (let r = 1; r <= f.length; r++) {
       for (let c = 1; c <= ELEMENTS_NO; c++) {
           document.getElementById('f' + r + c).textContent = f[r-1][c-1].toFixed(3);    
       }
@@ -134,8 +138,8 @@ function updateFertilisersInputs(f) {
 }
 
 function calculateEC() {
-  let molarMass = [14.0067, 14.0067, 30.973762, 39.0983, 40.078, 24.305, 32.065];
-  let catCharge = [      1,       0,         0,       1,      2,      2,      0];
+  let molarMass = [14.0067, 14.0067, 30.973762, 39.0983, 40.078, 24.305, 32.065, 35.453];
+  let catCharge = [      1,       0,         0,       1,      2,      2,      0,      0];
   let ec = 0.095 * (math.sum(math.dotMultiply(math.dotDivide(profile, molarMass),catCharge)) + 2);
   document.getElementById('pEC').value = ec.toFixed(3);    
   return ec;
