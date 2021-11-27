@@ -54,6 +54,7 @@ function onProfileChange(solver) {
 
     profile = math.multiply(fertilisers, weights);
     updateProfileInputs();
+    calculateEC();
 }
 
 function setProfile(p) {
@@ -122,7 +123,6 @@ function updateProfileInputs() {
     }
     document.getElementById('pN').value = (profile[NH4] + profile[NO3]).toFixed(3);
     document.getElementById('pNRatio').value = (profile[NH4] / profile[NO3]).toFixed(3);
-    console.log(profile[NH4] / profile[NO3], profile[NH4], profile[NO3])
 }
 
 function updateFertilisersInputs(f) {
@@ -131,4 +131,12 @@ function updateFertilisersInputs(f) {
           document.getElementById('f' + r + c).textContent = f[r-1][c-1].toFixed(3);    
       }
     }
+}
+
+function calculateEC() {
+  let molarMass = [14.0067, 14.0067, 30.973762, 39.0983, 40.078, 24.305, 32.065];
+  let catCharge = [      1,       0,         0,       1,      2,      2,      0];
+  let ec = 0.095 * (math.sum(math.dotMultiply(math.dotDivide(profile, molarMass),catCharge)) + 2);
+  document.getElementById('pEC').value = ec.toFixed(3);    
+  return ec;
 }
