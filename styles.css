@@ -2,7 +2,7 @@
 
 body {
     margin: 0 auto;
-    width: 1000px;
+    width: 950px;
     padding: 1em;
     position:absolute;
     top: 0;
@@ -11,7 +11,7 @@ body {
 
 
 input[type=number] {
-  width: 110px;
+  width: 100px;
 }
 
 .profile-grid-container {
