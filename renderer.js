@@ -1,5 +1,5 @@
-const NO3 = 0;
-const NH4 = 1;
+const NH4 = 0;
+const NO3 = 1;
 const P   = 2;
 const K   = 3;
 const Ca  = 4;
@@ -9,9 +9,6 @@ const ELEMENTS_NO   = 7;
 
 const elements  = ['NH4', 'NO3', 'P', 'K', 'Ca', 'Mg', 'S'];
 
-let profile = [12.428, 165.702, 60, 226.840, 141.83, 32.25, 42.543];
-updateProfileInputs();
-
 let fCaN2O6    = [    0.7,  14.176,         0,       0,  19.28,      0,      0];
 let fKNO3      = [      0,  13.649,         0,    38.1,      0,      0,      0];
 let fNH4NO3    = [ 16.520,  16.520,         0,       0,      0,      0,      0];
@@ -19,20 +16,13 @@ let fMgSO4     = [      0,       0,         0,       0,      0, 10.221, 13.484];
 let fKH2PO4    = [      0,       0,      21.8,  27.518,      0,      0,      0];
 let fK2SO4     = [      0,       0,         0,  44.874,      0,      0, 18.401];
 
-const fertilisersPercent = math.matrixFromRows(fCaN2O6, fKNO3, fNH4NO3, fMgSO4, fKH2PO4, fK2SO4);
-const fertilisers = math.transpose(math.multiply(fertilisersPercent, 0.01));
-const mInvFreeS  = math.inv(fertilisers.filter((value, index, arr) => index != S));
-const mInvFreeCa = math.inv(fertilisers.filter((value, index, arr) => index != Ca));
+let profile = [];
+let fertilisers = [];
+let mInvFreeS  = [];
+let mInvFreeCa = [];
 
-
-updateFertilisersInputs();
-
-let no3 = parseFloat(document.getElementById('pNO3').value);
-let nh4 = parseFloat(document.getElementById('pNH4').value);
-console.log(no3 + " " + nh4);
-document.getElementById('pN').value = nh4 + no3;
-document.getElementById('pNRatio').value = (nh4 / no3).toFixed(3);
-onProfileChangeFreeS();
+setFertilisers(math.matrixFromRows(fCaN2O6, fKNO3, fNH4NO3, fMgSO4, fKH2PO4, fK2SO4));
+setProfile([12.428, 165.702, 60, 226.840, 141.83, 32.25, 42.543]);
 
 document.getElementById('pN').addEventListener('input', e => {onNchange()});
 document.getElementById('pNRatio').addEventListener('input', e => {onNchange()});
@@ -66,9 +56,21 @@ function onProfileChange(solver) {
     updateProfileInputs();
 }
 
+function setProfile(p) {
+    profile = p;
+    updateProfileInputs();
+    onProfileChangeFreeS();
+}
+
+function setFertilisers(f) {
+    updateFertilisersInputs(f);
+    fertilisers = math.transpose(math.multiply(f, 0.01));
+    mInvFreeS  = math.inv(fertilisers.filter((value, index, arr) => index != S));
+    mInvFreeCa = math.inv(fertilisers.filter((value, index, arr) => index != Ca));
+}
 
 function updateRatios() {
-    let p = [parseFloat(profile[NO3]) + parseFloat(profile[NH4]), profile[P], profile[K], profile[Ca], profile[Mg], profile[S]];
+    let p = [profile[NO3] + profile[NH4], profile[P], profile[K], profile[Ca], profile[Mg], profile[S]];
     let m = math.matrixFromRows(p, p, p, p, p, p);
     let m2 = math.matrixFromColumns(p, p, p, p, p, p);
 
@@ -119,12 +121,14 @@ function updateProfileInputs() {
         document.getElementById('p' + elements[i]).value = profile[i].toFixed(3);
     }
     document.getElementById('pN').value = (profile[NH4] + profile[NO3]).toFixed(3);
+    document.getElementById('pNRatio').value = (profile[NH4] / profile[NO3]).toFixed(3);
+    console.log(profile[NH4] / profile[NO3], profile[NH4], profile[NO3])
 }
 
-function updateFertilisersInputs() {
+function updateFertilisersInputs(f) {
     for (let r = 1; r < ELEMENTS_NO; r++) {
       for (let c = 1; c <= ELEMENTS_NO; c++) {
-          document.getElementById('f' + r + c).textContent = fertilisersPercent[r-1][c-1].toFixed(3);    
+          document.getElementById('f' + r + c).textContent = f[r-1][c-1].toFixed(3);    
       }
     }
 }
