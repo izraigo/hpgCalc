@@ -10,6 +10,13 @@ const ELEMENTS_NO   = 8;
 
 const elements  = ['NH4',    'NO3',       'P',     'K',   'Ca',   'Mg',    'S',  'Cl'];
 
+const molarMass = [14.0067, 14.0067, 30.973762, 39.0983, 40.078, 24.305, 32.065, 135.453];
+const catCharge = [      1,       0,         0,       1,      2,      2,      0,       0];
+const mEC = math.dotMultiply(molarMass, catCharge);
+const mECInv = math.map(mEC, (x) => x == 0 ? 0 : 1/x);
+
+
+
 let fCaN2O6    = [    0.7,  14.176,         0,       0,  19.28,      0,      0,      0];
 let fKNO3      = [      0,  13.649,         0,    38.1,      0,      0,      0,      0];
 let fNH4NO3    = [ 16.520,  16.520,         0,       0,      0,      0,      0,      0];
@@ -37,6 +44,8 @@ document.getElementById('pCa').addEventListener('input', e => {onProfileChangeFr
 document.getElementById('pMg').addEventListener('input', e => {onProfileChangeFreeS()});
 document.getElementById('pS').addEventListener('input', e => {onProfileChangeFreeCa()});
 document.getElementById('pCl').addEventListener('input', e => {onProfileChangeFreeS()});
+document.getElementById('pEC').addEventListener('input', e => {calculateFromEC()});
+
 
 function onProfileChangeFreeS() {
     solver = () => math.multiply(mInvFreeS, profile.filter((value, index, arr) => index != S));
@@ -138,9 +147,18 @@ function updateFertilisersInputs(f) {
 }
 
 function calculateEC() {
-  let molarMass = [14.0067, 14.0067, 30.973762, 39.0983, 40.078, 24.305, 32.065, 35.453];
-  let catCharge = [      1,       0,         0,       1,      2,      2,      0,      0];
-  let ec = 0.095 * (math.sum(math.dotMultiply(math.dotDivide(profile, molarMass),catCharge)) + 2);
+  let ec = 0.095 * (math.multiply(profile, mECInv) + 2);
   document.getElementById('pEC').value = ec.toFixed(3);    
   return ec;
+}
+
+function calculateFromEC() {
+    let currentEC = 0.095 * (math.multiply(profile, mECInv) + 2);
+    let targetEC = parseFloat(document.getElementById('pEC').value);    
+    let p = profile[P];
+    profile = math.multiply(profile, targetEC / currentEC);
+    profile[P] = p;
+
+    updateProfileInputs();
+    onProfileChangeFreeS();    
 }
