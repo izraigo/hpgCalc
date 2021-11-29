@@ -12,8 +12,8 @@ const elements  = ['NH4',    'NO3',       'P',     'K',   'Ca',   'Mg',    'S', 
 
 const molarMass = [14.0067, 14.0067, 30.973762, 39.0983, 40.078, 24.305, 32.065, 135.453];
 const catCharge = [      1,       0,         0,       1,      2,      2,      0,       0];
-const mEC = math.dotMultiply(molarMass, catCharge);
-const mECInv = math.map(mEC, (x) => x == 0 ? 0 : 1/x);
+const mEC = math.dotMultiply(math.dotPow(molarMass, -1), catCharge);
+
 
 
 
@@ -44,17 +44,24 @@ document.getElementById('pCa').addEventListener('input', e => {onProfileChangeFr
 document.getElementById('pMg').addEventListener('input', e => {onProfileChangeFreeS()});
 document.getElementById('pS').addEventListener('input', e => {onProfileChangeFreeCa()});
 document.getElementById('pCl').addEventListener('input', e => {onProfileChangeFreeS()});
-document.getElementById('pEC').addEventListener('input', e => {calculateFromEC()});
+document.getElementById('pEC').addEventListener('input', e => {calculateFromEC(parseFloat(document.getElementById('pEC').value), solverFreeS);});
 
+document.querySelectorAll('input[id^="r"]').forEach((e) => e.addEventListener('input', e => {onRatioChange(e)}));
+
+function solverFreeCa() {
+    return math.multiply(mInvFreeCa, profile.filter((value, index, arr) => index != Ca));
+} 
+
+function solverFreeS() {
+    return math.multiply(mInvFreeS, profile.filter((value, index, arr) => index != S));
+} 
 
 function onProfileChangeFreeS() {
-    solver = () => math.multiply(mInvFreeS, profile.filter((value, index, arr) => index != S));
-    onProfileChange(solver);
+    onProfileChange(solverFreeS);
 }
 
 function onProfileChangeFreeCa() {
-    solver = () => math.multiply(mInvFreeCa, profile.filter((value, index, arr) => index != Ca));
-    onProfileChange(solver);
+    onProfileChange(solverFreeCa);
 }
 
 function onProfileChange(solver) {
@@ -67,13 +74,13 @@ function onProfileChange(solver) {
 
     profile = math.multiply(fertilisers, weights);
     updateProfileInputs();
-    calculateEC();
+    document.getElementById('pEC').value = calculateEC().toFixed(3);    
 }
 
 function setProfile(p) {
     profile = p;
     updateProfileInputs();
-    onProfileChangeFreeS();
+    onProfileChange(solverFreeS);
 }
 
 function setFertilisers(f) {
@@ -91,7 +98,7 @@ function updateRatios() {
     let ratios = math.dotDivide(m, m2);
     for (let r = 1; r <= size; r++) {
         for (let c = 1; c <= size; c++) {
-            document.getElementById('r' + r + c).textContent = ratios[r - 1][c - 1].toFixed(3);
+            if (r != c) document.getElementById('r' + r + c).value = ratios[r - 1][c - 1].toFixed(3);
         }
     }
 }
@@ -147,18 +154,38 @@ function updateFertilisersInputs(f) {
 }
 
 function calculateEC() {
-  let ec = 0.095 * (math.multiply(profile, mECInv) + 2);
-  document.getElementById('pEC').value = ec.toFixed(3);    
-  return ec;
+    return 0.095 * (math.multiply(profile, mEC) + 2);
 }
 
-function calculateFromEC() {
-    let currentEC = 0.095 * (math.multiply(profile, mECInv) + 2);
-    let targetEC = parseFloat(document.getElementById('pEC').value);    
+function calculateFromEC(targetEC, solver) {
+    let currentEC = calculateEC();
     let p = profile[P];
     profile = math.multiply(profile, targetEC / currentEC);
     profile[P] = p;
 
     updateProfileInputs();
-    onProfileChangeFreeS();    
+    onProfileChange(solver);
+}
+
+function onRatioChange(e) {
+    let indTo = parseInt(e.srcElement.id.charAt(1));
+    let indFrom = parseInt(e.srcElement.id.charAt(2));
+    let r = 1 / parseFloat(e.srcElement.value);
+    let targetEC = calculateEC();
+
+    const N = 1;
+    if (indTo == N) {
+        let n = profile[indFrom] * r;
+        let ratio = parseFloat(document.getElementById('pNRatio').value);
+        profile[NH4] = (n / (1 + 1 / ratio))
+        profile[NO3] = n - profile[NH4];
+    } else if (indFrom == N) {
+        profile[indTo] = (profile[NH4] + profile[NO3]) * r;
+    } else {
+        profile[indTo] = profile[indFrom] * r;
+    }
+
+    updateProfileInputs();
+    updateRatios();
+    calculateFromEC(targetEC, indTo == S ? solverFreeCa : solverFreeS);
 }
