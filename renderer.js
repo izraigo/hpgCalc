@@ -68,13 +68,16 @@ function onProfileChange(solver) {
     updateProfileMatrix();
     updateRatios();
     let weights = solver();
-    for (let w = 1; w < ELEMENTS_NO; w++) {
-        document.getElementById('w' + w).textContent = (weights[w - 1] * 0.001).toFixed(3);
-    }
-
+    updateWeightInputs(weights)
     profile = math.multiply(fertilisers, weights);
     updateProfileInputs();
     document.getElementById('pEC').value = calculateEC().toFixed(3);    
+}
+
+function updateWeightInputs(weights) {
+    for (let w = 1; w < ELEMENTS_NO; w++) {
+        document.getElementById('w' + w).textContent = (weights[w - 1] * 0.001).toFixed(3);
+    }
 }
 
 function setProfile(p) {
@@ -171,7 +174,13 @@ function onRatioChange(e) {
     let indTo = parseInt(e.srcElement.id.charAt(1));
     let indFrom = parseInt(e.srcElement.id.charAt(2));
     let r = 1 / parseFloat(e.srcElement.value);
-    let targetEC = calculateEC();
+    let targetEC = parseFloat(document.getElementById('pEC').value);
+
+    if (indTo == P) {
+        indTo = indFrom;
+        indFrom = P;
+        r = 1 / r;
+    }
 
     const N = 1;
     if (indTo == N) {
