@@ -47,6 +47,7 @@ document.getElementById('pCl').addEventListener('input', e => {onProfileChangeFr
 document.getElementById('pEC').addEventListener('input', e => {calculateFromEC(parseFloat(document.getElementById('pEC').value), solverFreeS);});
 
 document.querySelectorAll('input[id^="r"]').forEach((e) => e.addEventListener('input', e => {onRatioChange(e)}));
+document.querySelectorAll('input[id^="w"]').forEach((e) => e.addEventListener('input', e => {onWeightChange()}));
 
 function solverFreeCa() {
     return math.multiply(mInvFreeCa, profile.filter((value, index, arr) => index != Ca));
@@ -76,8 +77,17 @@ function onProfileChange(solver) {
 
 function updateWeightInputs(weights) {
     for (let w = 1; w < ELEMENTS_NO; w++) {
-        document.getElementById('w' + w).textContent = (weights[w - 1] * 0.001).toFixed(3);
+        document.getElementById('w' + w).value = (weights[w - 1] * 0.001).toFixed(3);
     }
+}
+
+function onWeightChange() {
+    let weights = Array.from({length: ELEMENTS_NO-1}, (x, i) => parseFloat(document.getElementById('w' + (i + 1)).value) * 1000);
+    profile = math.multiply(fertilisers, weights);
+    updateProfileInputs();
+    updateProfileMatrix();
+    updateRatios();
+    document.getElementById('pEC').value = calculateEC().toFixed(3);    
 }
 
 function setProfile(p) {
@@ -176,7 +186,7 @@ function onRatioChange(e) {
     let r = 1 / parseFloat(e.srcElement.value);
     let targetEC = parseFloat(document.getElementById('pEC').value);
 
-    if (indTo == P) {
+    if (indTo == P) { // Расчет от фосфора
         indTo = indFrom;
         indFrom = P;
         r = 1 / r;
