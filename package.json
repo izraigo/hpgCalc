@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "electron-tabs": "^0.15.0",
-    "mathjs": "^10.0.0"
+    "mathjs": "^11.3.3"
   }
 }
